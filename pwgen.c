@@ -23,7 +23,7 @@ int (*pw_number)(int max_num);
 
 /* Program parameters set via getopt */
 
-int	pw_length = 8;
+int	pw_length = 10;
 int	num_pw = -1;
 int	pwgen_flags = 0;
 int	do_columns = 0;
@@ -34,6 +34,7 @@ struct option pwgen_options[] = {
 	{ "capitalize", no_argument, 0, 'c' },
 	{ "numerals", no_argument, 0, 'n'},
 	{ "symbols", no_argument, 0, 'y'},
+        { "no-symbols", no_argument, 0, 'Y'},
 	{ "num-passwords", required_argument, 0, 'N'},
 	{ "secure", no_argument, 0, 's' },
 	{ "help", no_argument, 0, 'h'},
@@ -47,7 +48,7 @@ struct option pwgen_options[] = {
 };
 #endif
 
-const char *pw_options = "01AaBCcnN:shH:vSy";
+const char *pw_options = "01AaBCcnN:shH:vSyY";
 
 static void usage(void)
 {
@@ -66,6 +67,9 @@ static void usage(void)
 	      stderr);
 	fputs("  -y or --symbols\n", stderr);
 	fputs("\tInclude at least one special symbol in the password\n", 
+	      stderr);
+        fputs("  -Y or --no-symbols\n", stderr);
+	fputs("\tInclude at no special symbols in the password\n",
 	      stderr);
 	fputs("  -s or --secure\n", stderr);
 	fputs("\tGenerate completely random passwords\n", stderr);
@@ -101,7 +105,7 @@ int main(int argc, char **argv)
 	pw_number = pw_random_number;
 	if (isatty(1)) {
 		do_columns = 1;
-		pwgen_flags |= PW_DIGITS | PW_UPPERS;
+		pwgen_flags |= PW_DIGITS | PW_UPPERS | PW_SYMBOLS;
 	}
 
 	while (1) {
@@ -155,6 +159,9 @@ int main(int argc, char **argv)
 			break;
 		case 'y':
 			pwgen_flags |= PW_SYMBOLS;
+			break;
+       		case 'Y':
+			pwgen_flags &= ~PW_SYMBOLS;
 			break;
 		case 'v':
 			pwgen = pw_rand;
