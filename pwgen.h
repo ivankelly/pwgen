@@ -49,3 +49,7 @@ extern int pw_random_number(int max_num);
 /* sha1num.c */
 extern void pw_sha1_init(char *sha1);
 extern int pw_sha1_number(int max_num);
+
+/* pbkdf2num.c */
+extern void pw_pbkdf2_askseed(void);
+extern int pw_pbkdf2_number(int max_num);

@@ -42,11 +42,12 @@ struct option pwgen_options[] = {
 	{ "sha1", required_argument, 0, 'H' },
 	{ "ambiguous", no_argument, 0, 'B' },
 	{ "no-vowels", no_argument, 0, 'v' },
+        { "ask-seed", no_argument, 0, 'S' },
 	{ 0, 0, 0, 0}
 };
 #endif
 
-const char *pw_options = "01AaBCcnN:shH:vy";
+const char *pw_options = "01AaBCcnN:shH:vSy";
 
 static void usage(void)
 {
@@ -82,6 +83,8 @@ static void usage(void)
 	fputs("  -v or --no-vowels\n", stderr);
 	fputs("\tDo not use any vowels so as to avoid accidental nasty words\n",
 	      stderr);
+        fputs("  -S\n", stderr);
+        fputs("\tAsk for seed interactively\n", stderr);
 	exit(1);
 }
 
@@ -157,6 +160,10 @@ int main(int argc, char **argv)
 			pwgen = pw_rand;
 			pwgen_flags |= PW_NO_VOWELS | PW_DIGITS | PW_UPPERS;
 			break;
+                case 'S':
+                        pw_pbkdf2_askseed();
+                        pw_number = pw_pbkdf2_number;
+                        break;
 		case 'h':
 		case '?':
 			usage();

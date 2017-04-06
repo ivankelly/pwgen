@@ -19,7 +19,7 @@ DEFS = @DEFS@
 CFLAGS = @CFLAGS@ $(WALL_OPTS)
 CPPFLAGS = @CPPFLAGS@
 ALL_CFLAGS = $(CPPFLAGS) $(DEFS) $(USE_WFLAGS) $(CFLAGS) $(XTRA_CFLAGS) 
-LDFLAGS = @LDFLAGS@
+LDFLAGS = @LDFLAGS@ @OPENSSL_LIBS@
 RM = @RM@
 MV = @MV@
 SED = @SED@
@@ -31,9 +31,9 @@ all:: pwgen
 .c.o:
 	$(CC) -c $(ALL_CFLAGS) $< -o $@
 
-OBJS= pwgen.o pw_phonemes.o pw_rand.o randnum.o sha1.o sha1num.o
+OBJS= pwgen.o pw_phonemes.o pw_rand.o randnum.o sha1.o sha1num.o pbkdf2num.o
 
-SRCS= pwgen.c pw_phonemes.c pw_rand.c randnum.c sha1.c sha1num.c
+SRCS= pwgen.c pw_phonemes.c pw_rand.c randnum.c sha1.c sha1num.c pbkdf2num.c
 
 
 pwgen: $(OBJS)
