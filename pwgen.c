@@ -44,11 +44,12 @@ struct option pwgen_options[] = {
 	{ "ambiguous", no_argument, 0, 'B' },
 	{ "no-vowels", no_argument, 0, 'v' },
         { "ask-seed", no_argument, 0, 'S' },
+        { "query", no_argument, 0, 'q' },
 	{ 0, 0, 0, 0}
 };
 #endif
 
-const char *pw_options = "01AaBCcnN:shH:vSyY";
+const char *pw_options = "01AaBCcnN:shH:vSyYq";
 
 static void usage(void)
 {
@@ -89,6 +90,8 @@ static void usage(void)
 	      stderr);
         fputs("  -S\n", stderr);
         fputs("\tAsk for seed interactively\n", stderr);
+        fputs("  -q\n", stderr);
+        fputs("\tQuery only, don't ask for seed twice\n", stderr);
 	exit(1);
 }
 
@@ -98,6 +101,7 @@ int main(int argc, char **argv)
 	int	term_width = 80;
 	int	c, i;
 	int	num_cols = -1;
+        int ask_seed = 0, ask_seed_query = 0;
 	char	*buf, *tmp;
 	void	(*pwgen)(char *inbuf, int size, int pw_flags);
 
@@ -168,9 +172,11 @@ int main(int argc, char **argv)
 			pwgen_flags |= PW_NO_VOWELS | PW_DIGITS | PW_UPPERS;
 			break;
                 case 'S':
-                        pw_pbkdf2_askseed();
-                        pw_number = pw_pbkdf2_number;
-                        break;
+                  ask_seed = 1;
+                  break;
+                case 'q':
+                  ask_seed_query = 1;
+                  break;
 		case 'h':
 		case '?':
 			usage();
@@ -209,7 +215,11 @@ int main(int argc, char **argv)
 	}
 	if (num_pw < 0)
 		num_pw = do_columns ? num_cols * 20 : 1;
-	
+
+        if (ask_seed) {
+          pw_pbkdf2_askseed(ask_seed_query);
+          pw_number = pw_pbkdf2_number;
+        }
 	buf = malloc(pw_length+1);
 	if (!buf) {
 		fprintf(stderr, "Couldn't malloc password buffer.\n");

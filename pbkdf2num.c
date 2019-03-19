@@ -36,7 +36,7 @@ void pw_pbkdf2_setseed(char* input, int len) {
   }
 }
 
-void pw_pbkdf2_askseed() {
+void pw_pbkdf2_askseed(int query) {
   char input[BUFFER_SIZE];
   char input2[BUFFER_SIZE];
 
@@ -52,13 +52,15 @@ void pw_pbkdf2_askseed() {
 
   fputs("Seed: ", stdout);
   fgets(input, BUFFER_SIZE, stdin);
-  fputs("\nSeed(again): ", stdout);
-  fgets(input2, BUFFER_SIZE, stdin);
+  if (!query) {
+    fputs("\nSeed(again): ", stdout);
+    fgets(input2, BUFFER_SIZE, stdin);
+  }
 
   tcsetattr(0, TCSADRAIN, &orig_ios);
   fputs("\n", stdout);
 
-  if (strcmp(input, input2) != 0) {
+  if (!query && strcmp(input, input2) != 0) {
     fputs("Seeds do not match\n", stderr);
     exit(-1);
   }
